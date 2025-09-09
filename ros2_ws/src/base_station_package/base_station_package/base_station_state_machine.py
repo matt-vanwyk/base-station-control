@@ -12,6 +12,7 @@ class BaseStationStateMachine(StateMachine):
     # Define States
     idle = State(initial=True)
     preparing_drone = State()
+    mission_uploaded = State()
     arms_centred = State()
     arms_not_centred = State()
     charging = State()
@@ -23,9 +24,10 @@ class BaseStationStateMachine(StateMachine):
 
     # Define Transitions
     prepare_drone = idle.to(preparing_drone)
-    uncentring_arms = preparing_drone.to(arms_not_centred)
+    uploading_mission = preparing_drone.to(mission_uploaded)
+    uncentring_arms = mission_uploaded.to(arms_not_centred)
     doors_opening = arms_not_centred.to(doors_open)
-    uploading_mission = doors_open.to(ready_for_takeoff)
+    station_ready = doors_open.to(ready_for_takeoff)
     takeoff = ready_for_takeoff.to(in_flight)
     landing = in_flight.to(drone_landed)
     centring_arms = drone_landed.to(arms_centred)
@@ -77,13 +79,12 @@ class BaseStationStateMachineNode(Node):
                 response = future.result()
                 if response.success:
                     self.get_logger().info(f'Drone ready: {response.drone_state}')
-                    self.get_logger().info("Drone preparation successful - ready to proceed to Step 2")
-                    # TODO: Transition to next state (uncentering arms)
-                    # self.state_machine.uncentring_arms()
+                    self.get_logger().info("Drone preparation successful - uploading mission")
+
+                    self.state_machine.uploading_mission()
                 else:
                     self.get_logger().error(f'Drone not ready: {response.error_message}')
                     self.get_logger().error("Drone preparation failed - aborting mission")
-                    # TODO: Add transition back to idle or error state
             except Exception as e:
                 self.get_logger().error(f'Service call failed: {str(e)}')
                 self.get_logger().error("Drone preparation failed - aborting mission")
