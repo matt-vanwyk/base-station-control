@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'telemetry_receiver = base_station_package.telemetry_receiver:main',
+            'base_station_state_machine = base_station_package.base_station_state_machine:main'
         ],
     },
 )
