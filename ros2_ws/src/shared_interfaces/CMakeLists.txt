@@ -10,6 +10,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/DroneCommand.msg"
   "msg/Waypoint.msg"
   "srv/PrepareForMission.srv"
+  "srv/UploadMission.srv"
   DEPENDENCIES std_msgs
 )
 
