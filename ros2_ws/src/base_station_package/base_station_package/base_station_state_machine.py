@@ -118,7 +118,6 @@ class BaseStationStateMachineNode(Node):
             try:
                 response = future.result()
                 if response.success:
-                    self.get_logger().info(f'Mission uploaded: {response.num_waypoints_received} waypoints')
                     self.get_logger().info("Mission upload successful - ready for Step 3")
                     # TODO: Transition to next state (uncentering arms)
                 else:
